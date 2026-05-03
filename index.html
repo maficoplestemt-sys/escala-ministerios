@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escala de Ministérios</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --roxo: #534AB7;
+    --roxo-dark: #3C3489;
+    --roxo-light: #EEEDFE;
+    --verde: #3B6D11;
+    --verde-light: #EAF3DE;
+    --gray-100: #F1EFE8;
+    --gray-200: #D3D1C7;
+    --gray-400: #888780;
+    --gray-700: #444441;
+    --text: #2C2C2A;
+    --text-muted: #5F5E5A;
+    --border: #D3D1C7;
+    --white: #ffffff;
+    --shadow: 0 2px 16px rgba(83,74,183,0.08);
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #F7F6F2;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--roxo-dark);
+    padding: 2rem 1rem 1.5rem;
+    text-align: center;
+  }
+  header h1 {
+    font-family: 'Lora', serif;
+    font-size: 1.8rem;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  header p {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 6px;
+  }
+
+  .tabs-wrap {
+    background: var(--white);
+    border-bottom: 1.5px solid var(--border);
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .tab-btn {
+    padding: 1rem 2.5rem;
+    border: none;
+    background: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .tab-btn:hover { color: var(--roxo); }
+  .tab-btn.active { color: var(--roxo); border-bottom-color: var(--roxo); }
+  .tab-btn.louvor-btn.active { color: var(--verde); border-bottom-color: var(--verde); }
+
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header .icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .icon-m { background: var(--roxo-light); }
+  .icon-l { background: var(--verde-light); }
+  .card-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .card-header p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .col-labels {
+    display: grid;
+    gap: 8px;
+    padding: 0.75rem 1.25rem 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .col-labels.min-grid { grid-template-columns: 150px 1fr 1fr 1fr 32px; }
+  .col-labels.lou-grid { grid-template-columns: 150px 1fr 1fr 1fr 32px; }
+
+  .rows-wrap { padding: 0.5rem 1.25rem; }
+
+  .entry-row {
+    display: grid;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+    animation: fadeIn 0.2s ease;
+  }
+  .entry-row.min-grid { grid-template-columns: 150px 1fr 1fr 1fr 32px; }
+  .entry-row.lou-grid { grid-template-columns: 150px 1fr 1fr 1fr 32px; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 8px 11px;
+    font-size: 0.85rem;
+    font-family: 'Nunito', sans-serif;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text);
+    transition: border 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  input[type="text"]:focus { border-color: var(--roxo); box-shadow: 0 0 0 3px rgba(83,74,183,0.1); }
+  input.date-input { font-weight: 700; color: var(--roxo-dark); background: var(--roxo-light); border-color: transparent; }
+  input.date-input:focus { border-color: var(--roxo); background: var(--white); }
+  .lou-panel input[type="text"]:focus { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(59,109,17,0.1); }
+  .lou-panel input.date-input { color: var(--verde); background: var(--verde-light); }
+  .lou-panel input.date-input:focus { border-color: var(--verde); background: var(--white); }
+
+  .remove-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-400);
+    font-size: 14px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .remove-btn:hover { background: #FCEBEB; border-color: #F09595; color: #A32D2D; }
+
+  .add-row-btn {
+    margin: 0.5rem 1.25rem 1.25rem;
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 16px;
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: calc(100% - 2.5rem);
+  }
+  .add-row-btn:hover { background: var(--gray-100); color: var(--text); border-color: var(--gray-400); }
+
+  /* Preview table */
+  .preview-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gray-400);
+    padding: 0 1.25rem 0.5rem;
+  }
+  .table-wrap { overflow-x: auto; padding: 0 1.25rem 1.25rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  thead th {
+    background: var(--gray-100);
+    padding: 9px 12px;
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { border-bottom: 1px solid var(--gray-100); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--gray-100); }
+  td { padding: 10px 12px; color: var(--text); vertical-align: middle; }
+  td.date-td { font-weight: 700; color: var(--roxo-dark); white-space: nowrap; }
+  .lou-panel td.date-td { color: var(--verde); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: var(--roxo-light);
+    color: var(--roxo-dark);
+    margin: 1px 2px;
+  }
+  .lou-panel .badge { background: var(--verde-light); color: var(--verde); }
+  td.empty-cell { color: var(--gray-200); font-style: italic; font-size: 0.8rem; }
+  .no-data td { text-align: center; color: var(--gray-400); font-style: italic; padding: 2rem; }
+
+  @media (max-width: 680px) {
+    .entry-row.min-grid,
+    .entry-row.lou-grid,
+    .col-labels.min-grid,
+    .col-labels.lou-grid {
+      grid-template-columns: 1fr;
+    }
+    .col-labels { display: none; }
+    input.date-input { border-radius: 8px; }
+    .remove-btn { justify-self: end; }
+    header h1 { font-size: 1.4rem; }
+    .tab-btn { padding: 0.75rem 1.25rem; font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Escala de Ministérios</h1>
+  <p>Igreja — Gestão de escalas de ministração e louvor</p>
+</header>
+
+<div class="tabs-wrap">
+  <button class="tab-btn active" onclick="switchTab('ministracao')">✦ Ministração</button>
+  <button class="tab-btn louvor-btn" onclick="switchTab('louvor')">♪ Louvor</button>
+</div>
+
+<main>
+
+  <!-- MINISTRAÇÃO -->
+  <div id="panel-ministracao" class="tab-panel active">
+    <div class="card">
+      <div class="card-header">
+        <div class="icon icon-m">✦</div>
+        <div>
+          <h2>Escala de Ministração</h2>
+          <p>Abertura · Oração pelos Ofertantes · Palavra</p>
+        </div>
+      </div>
+      <div class="col-labels min-grid">
+        <span>Data do Culto</span><span>Abertura</span><span>Oração pelos Ofertantes</span><span>Palavra</span><span></span>
+      </div>
+      <div class="rows-wrap" id="rows-m"></div>
+      <button class="add-row-btn" onclick="addRow('m')">+ Adicionar culto</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="icon icon-m">📋</div>
+        <div><h2>Visualização da Escala</h2><p>Atualiza conforme você preenche</p></div>
+      </div>
+      <div class="preview-label">Escala completa</div>
+      <div class="table-wrap">
+        <table id="table-m">
+          <thead><tr><th>Culto</th><th>Abertura</th><th>Oração pelos Ofertantes</th><th>Palavra</th></tr></thead>
+          <tbody id="tbody-m"><tr class="no-data"><td colspan="4">Nenhum culto cadastrado.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOUVOR -->
+  <div id="panel-louvor" class="tab-panel lou-panel">
+    <div class="card">
+      <div class="card-header">
+        <div class="icon icon-l">♪</div>
+        <div>
+          <h2>Escala de Louvor</h2>
+          <p>Dirigente · Bacs Vocal · Instrumentistas</p>
+        </div>
+      </div>
+      <div class="col-labels lou-grid">
+        <span>Data do Culto</span><span>Dirigente</span><span>Bacs Vocal</span><span>Instrumentistas</span><span></span>
+      </div>
+      <div class="rows-wrap" id="rows-l"></div>
+      <button class="add-row-btn" onclick="addRow('l')">+ Adicionar culto</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="icon icon-l">📋</div>
+        <div><h2>Visualização da Escala</h2><p>Atualiza conforme você preenche</p></div>
+      </div>
+      <div class="preview-label">Escala completa</div>
+      <div class="table-wrap">
+        <table id="table-l">
+          <thead><tr><th>Culto</th><th>Dirigente</th><th>Bacs Vocal</th><th>Instrumentistas</th></tr></thead>
+          <tbody id="tbody-l"><tr class="no-data"><td colspan="4">Nenhum culto cadastrado.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const KEY_M = 'escala_m';
+const KEY_L = 'escala_l';
+
+const GRID = { m: 'min-grid', l: 'lou-grid' };
+const PH = {
+  m: ['19/04/2026', 'Pr. Rafael', 'Nilo', 'Gustavo'],
+  l: ['19/04/2026', 'Rodolfo', 'João, Maria', 'André, Paulo']
+};
+
+let state = {
+  m: loadData(KEY_M, [
+    { id: 1, f: ['19/04/2026','Pr. Rafael','Nilo','Gustavo'] },
+    { id: 2, f: ['26/04/2026','Paulo Henrique','Guilherme','André'] },
+    { id: 3, f: ['03/05/2026','','',''] },
+    { id: 4, f: ['10/05/2026','','',''] },
+  ]),
+  l: loadData(KEY_L, [
+    { id: 1, f: ['19/04/2026','Rodolfo','',''] },
+    { id: 2, f: ['26/04/2026','','',''] },
+    { id: 3, f: ['03/05/2026','','',''] },
+    { id: 4, f: ['10/05/2026','','',''] },
+  ])
+};
+
+function loadData(key, def) {
+  try { const d = localStorage.getItem(key); return d ? JSON.parse(d) : def; } catch { return def; }
+}
+function saveData(type) {
+  try { localStorage.setItem(type === 'm' ? KEY_M : KEY_L, JSON.stringify(state[type])); } catch {}
+}
+
+function addRow(type) {
+  state[type].push({ id: Date.now(), f: ['','','',''] });
+  saveData(type);
+  render(type);
+  const rows = document.getElementById('rows-' + type);
+  const last = rows.querySelector('.entry-row:last-child');
+  if (last) last.querySelector('input').focus();
+}
+
+function removeRow(type, id) {
+  state[type] = state[type].filter(r => r.id !== id);
+  saveData(type);
+  render(type);
+}
+
+function updateField(type, id, fi, val) {
+  const row = state[type].find(r => r.id === id);
+  if (row) row.f[fi] = val;
+  saveData(type);
+  renderTable(type);
+}
+
+function render(type) {
+  renderRows(type);
+  renderTable(type);
+}
+
+function renderRows(type) {
+  const container = document.getElementById('rows-' + type);
+  container.innerHTML = '';
+  state[type].forEach(row => {
+    const div = document.createElement('div');
+    div.className = `entry-row ${GRID[type]}`;
+    const ph = PH[type];
+    div.innerHTML = `
+      <input type="text" class="date-input" placeholder="${ph[0]}" value="${esc(row.f[0])}" oninput="updateField('${type}',${row.id},0,this.value)">
+      <input type="text" placeholder="${ph[1]}" value="${esc(row.f[1])}" oninput="updateField('${type}',${row.id},1,this.value)">
+      <input type="text" placeholder="${ph[2]}" value="${esc(row.f[2])}" oninput="updateField('${type}',${row.id},2,this.value)">
+      <input type="text" placeholder="${ph[3]}" value="${esc(row.f[3])}" oninput="updateField('${type}',${row.id},3,this.value)">
+      <button class="remove-btn" onclick="removeRow('${type}',${row.id})" title="Remover">✕</button>`;
+    container.appendChild(div);
+  });
+}
+
+function renderTable(type) {
+  const tbody = document.getElementById('tbody-' + type);
+  if (!state[type].length) {
+    tbody.innerHTML = '<tr class="no-data"><td colspan="4">Nenhum culto cadastrado.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = state[type].map(row => {
+    const date = row.f[0] || '<span style="color:#B4B2A9;font-style:italic">sem data</span>';
+    const f1 = row.f[1] ? `<span class="badge">${esc(row.f[1])}</span>` : '<span class="empty-cell">—</span>';
+    const f2 = row.f[2] ? `<span class="badge">${esc(row.f[2])}</span>` : '<span class="empty-cell">—</span>';
+    const f3 = row.f[3] ? `<span class="badge">${esc(row.f[3])}</span>` : '<span class="empty-cell">—</span>';
+    return `<tr><td class="date-td">${date}</td><td>${f1}</td><td>${f2}</td><td>${f3}</td></tr>`;
+  }).join('');
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='ministracao')||(i===1&&tab==='louvor')));
+  document.getElementById('panel-ministracao').classList.toggle('active', tab==='ministracao');
+  document.getElementById('panel-louvor').classList.toggle('active', tab==='louvor');
+}
+
+render('m');
+render('l');
+</script>
+</body>
+</html>
